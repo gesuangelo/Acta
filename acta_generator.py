@@ -8,6 +8,38 @@ from reportlab.platypus import (
     TableStyle,
 )
 from reportlab.lib import colors
+from collections.abc import Mapping
+
+
+def _normalize_data(data):
+    """Normalize form-like data into a plain dictionary.
+
+    Accepts regular dictionaries as well as objects similar to Flask's
+    ``request.form`` which provide ``keys`` and ``getlist`` methods. Field
+    names ending in ``[]`` are normalized by stripping the brackets.
+    """
+
+    if not data:
+        return {}
+
+    # Handle MultiDict / form-like objects
+    if hasattr(data, "keys") and hasattr(data, "getlist"):
+        normalized = {}
+        for key in data.keys():
+            values = data.getlist(key)
+            base_key = key.rstrip("[]")
+            normalized[base_key] = values if len(values) > 1 else values[0]
+        return normalized
+
+    # Fallback to a simple mapping
+    if isinstance(data, Mapping):
+        normalized = {}
+        for key, value in data.items():
+            base_key = key.rstrip("[]")
+            normalized[base_key] = value
+        return normalized
+
+    return dict(data)
 
 
 def generate_acta_pdf(path="acta.pdf", data=None):
@@ -17,9 +49,10 @@ def generate_acta_pdf(path="acta.pdf", data=None):
     ----------
     path: str
         Output path for the generated PDF.
-    data: dict | None
-        Dictionary with keys ``fecha``, ``lugar``, ``asistentes``, ``agenda``
-        and ``acuerdos``. Missing keys default to empty strings/lists.
+    data: dict | object | None
+        Data source with keys ``fecha``, ``lugar``, ``asistentes``, ``agenda``
+        and ``acuerdos``. It may be a regular dict or a form-like object. Missing
+        keys default to empty strings/lists.
     """
 
     doc = SimpleDocTemplate(
@@ -51,12 +84,12 @@ def generate_acta_pdf(path="acta.pdf", data=None):
 
     story = [Paragraph("Acta de Reunión", styles["TitleCentered"])]
 
-    data = data or {}
+    data = _normalize_data(data)
     fecha = data.get("fecha", "")
     lugar = data.get("lugar", "")
     asistentes = data.get("asistentes", "")
     if isinstance(asistentes, list):
-        asistentes = ", ".join(asistentes)
+        asistentes = ", ".join(str(a) for a in asistentes)
 
     table_data = [
         ("Fecha:", fecha),

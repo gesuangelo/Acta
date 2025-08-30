@@ -27,6 +27,10 @@ data = {
     "acuerdos": "Se aprobó el presupuesto.",
 }
 generate_acta_pdf("acta.pdf", data=data)
+
+# También acepta estructuras tipo formulario (por ejemplo Flask request.form)
+# con campos "agenda[]" o "asistentes[]" para valores múltiples.
+# generate_acta_pdf("acta.pdf", data=request.form)
 ```
 
 El archivo `acta.pdf` se generará en el directorio actual con la información proporcionada.
