@@ -16,6 +16,9 @@ python acta_generator.py
 
 El archivo `acta.pdf` se generará en el directorio actual.
 
+La función `generate_acta_pdf` también devuelve los bytes del PDF, lo que permite
+enviarlo directamente en flujos de descarga o respuestas HTTP.
+
 ## Pruebas
 
 Las pruebas utilizan `pytest`:

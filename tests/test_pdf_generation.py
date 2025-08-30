@@ -1,4 +1,9 @@
 import os
+import sys
+from pathlib import Path
+
+# Ensure the package is importable when running tests directly
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 from acta_generator import generate_acta_pdf
 
 
