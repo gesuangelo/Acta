@@ -1,2 +1,3 @@
 reportlab
 pytest
+PyPDF2

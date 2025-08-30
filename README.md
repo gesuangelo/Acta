@@ -11,10 +11,25 @@ Este proyecto genera un documento PDF formal de un acta de reunión utilizando l
 
 ```bash
 pip install -r requirements.txt
-python acta_generator.py
+python acta_generator.py  # genera un ejemplo con datos de muestra
 ```
 
-El archivo `acta.pdf` se generará en el directorio actual.
+También puedes importar la función y pasar tus propios datos:
+
+```python
+from acta_generator import generate_acta_pdf
+
+data = {
+    "fecha": "2024-09-01",
+    "lugar": "Sala de Juntas",
+    "asistentes": ["Ana", "Luis"],
+    "agenda": ["Revisión de presupuesto", "Planificación"],
+    "acuerdos": "Se aprobó el presupuesto.",
+}
+generate_acta_pdf("acta.pdf", data=data)
+```
+
+El archivo `acta.pdf` se generará en el directorio actual con la información proporcionada.
 
 ## Pruebas
 
